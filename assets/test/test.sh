@@ -10,7 +10,18 @@ export TARGET_PORT="80"
 export TARGET_PATH="/kaarten.html"
 export TARGET_KEYWORD="Kaartdiensten"
 
+set -e
+freeMem=`awk '/MemFree/ { print int($2/1024) }' /proc/meminfo`
+s=$(($freeMem/10*8))
+x=$(($freeMem/10*8))
+n=$(($freeMem/10*2))
+export JVM_ARGS="-Xmn${n}m -Xms${s}m -Xmx${x}m"
+
+echo "START Running Jmeter on `date`"
+echo "JVM_ARGS=${JVM_ARGS}"
+
 T_DIR=/tmp/test
+R_DIR=${T_DIR}/report
 
 rm -rf ${T_DIR}/* > /dev/null 2>&1
 mkdir -p ${R_DIR}
