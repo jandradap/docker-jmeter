@@ -1,10 +1,20 @@
-# inspired by https://github.com/hauptmedia/docker-jmeter  and
-# https://github.com/hhcordero/docker-jmeter-server/blob/master/Dockerfile
-FROM alpine:3.10
+FROM alpine:3.11
 
-MAINTAINER Just van den Broecke<just@justobjects.nl>
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
+LABEL org.label-schema.build-date=$BUILD_DATE \
+			org.label-schema.name="docker-jmeter" \
+			org.label-schema.description="Jmeter in Docker" \
+			org.label-schema.url="http://andradaprieto.es" \
+			org.label-schema.vcs-ref=$VCS_REF \
+			org.label-schema.vcs-url="https://github.com/jandradap/docker-jmeter" \
+			org.label-schema.vendor="Jorge Andrada Prieto" \
+			org.label-schema.version=$VERSION \
+			org.label-schema.schema-version="1.0" \
+			maintainer="Jorge Andrada Prieto <jandradap@gmail.com>"
 
-ARG JMETER_VERSION="5.1.1"
+ARG JMETER_VERSION="5.2"
 ENV JMETER_HOME /opt/apache-jmeter-${JMETER_VERSION}
 ENV	JMETER_BIN	${JMETER_HOME}/bin
 ENV	JMETER_DOWNLOAD_URL  https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz
@@ -24,7 +34,8 @@ RUN    apk update \
 	&& curl -L --silent ${JMETER_DOWNLOAD_URL} >  /tmp/dependencies/apache-jmeter-${JMETER_VERSION}.tgz  \
 	&& mkdir -p /opt  \
 	&& tar -xzf /tmp/dependencies/apache-jmeter-${JMETER_VERSION}.tgz -C /opt  \
-	&& rm -rf /tmp/dependencies
+	&& rm -rf /tmp/dependencies \
+	&& mkdir /test
 
 # TODO: plugins (later)
 # && unzip -oq "/tmp/dependencies/JMeterPlugins-*.zip" -d $JMETER_HOME
@@ -32,9 +43,12 @@ RUN    apk update \
 # Set global PATH such that "jmeter" command is found
 ENV PATH $PATH:$JMETER_BIN
 
-# Entrypoint has same signature as "jmeter" command
-COPY entrypoint.sh /
+COPY assets/test /test
 
-WORKDIR	${JMETER_HOME}
+COPY assets/entrypoint.sh /
+
+# WORKDIR	${JMETER_HOME}
+
+WORKDIR /test
 
 ENTRYPOINT ["/entrypoint.sh"]
