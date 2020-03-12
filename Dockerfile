@@ -44,14 +44,14 @@ RUN    apk update \
 # TODO: plugins (later)
 # && unzip -oq "/tmp/dependencies/JMeterPlugins-*.zip" -d $JMETER_HOME
 
-# Set global PATH such that "jmeter" command is found
 ENV PATH $PATH:$JMETER_BIN
 
 COPY assets/test /test
 
 COPY assets/entrypoint.sh /
 
-# WORKDIR	${JMETER_HOME}
+RUN chmod +x /entrypoint.sh \
+  && chmod +x /test/test.sh
 
 WORKDIR /test
 
