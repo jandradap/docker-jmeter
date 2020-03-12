@@ -35,7 +35,11 @@ RUN    apk update \
 	&& mkdir -p /opt  \
 	&& tar -xzf /tmp/dependencies/apache-jmeter-${JMETER_VERSION}.tgz -C /opt  \
 	&& rm -rf /tmp/dependencies \
-	&& mkdir /test
+	&& mkdir /test /tmp/test \
+	&& chmod -R 777 /tmp/test \
+	&& chmod -R 777 /test \
+	&& chmod -R +rX /opt/apache-jmeter-${JMETER_VERSION} \
+	&& chmod -R a+x /opt/apache-jmeter-${JMETER_VERSION}/bin/*
 
 # TODO: plugins (later)
 # && unzip -oq "/tmp/dependencies/JMeterPlugins-*.zip" -d $JMETER_HOME
@@ -52,3 +56,5 @@ COPY assets/entrypoint.sh /
 WORKDIR /test
 
 ENTRYPOINT ["/entrypoint.sh"]
+
+USER 1001
