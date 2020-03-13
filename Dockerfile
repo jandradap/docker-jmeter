@@ -30,6 +30,8 @@ RUN apk --update --clean-protected --no-cache add ca-certificates \
     unzip \
     bash \
     nss \
+    rsync \
+    vim \
   && rm -rf /var/cache/apk/*
 
 # JMETER
