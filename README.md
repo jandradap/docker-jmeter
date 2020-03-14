@@ -23,6 +23,38 @@ Apache Jmeter 5.2 for OpenShift
 /opt/apache-jmeter-5.2/bin/PluginsManagerCMD uninstall jmeter-tcp,jmeter-ftp,jmeter-jdbc
 ```
 
+## Local
+
+```bash
+mkdir jmeterlocal
+cp *.jmx jmeterlocal/
+
+docker run --rm -d --name=jmeter \
+-v $(pwd)/jmeterlocal:/tmp/jmeterlocal \
+jorgeandrada/docker-jmeter
+
+docker exec -it jmeter bash
+cd /tmp/jmeterlocal
+/jvm_args.sh
+
+JMXNAME="test"
+JMXPATH="/tmp/jmeterlocal"
+
+cd $JMXPATH
+mkdir -p $JMXPATH/$JMXNAME/report
+
+/opt/apache-jmeter-5.2/bin/PluginsManagerCMD.sh install-for-jmx $JMXPATH/$JMXNAME.jmx
+
+jmeter -Dlog_level.jmeter=DEBUG \
+-n -t $JMXPATH/$JMXNAME.jmx -l $JMXPATH/$JMXNAME.jtl -j $JMXPATH/jmeter.log \
+-e -o $JMXPATH/$JMXNAME/report
+
+tar -czvf $JMXNAME.tar.gz $JMXPATH/$JMXNAME
+exit
+
+ls -lh jmeterlocal/
+```
+
 ## OpenShift
 
 It is necessary to add the variable:
