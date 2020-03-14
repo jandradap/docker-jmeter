@@ -58,9 +58,12 @@ RUN cd /opt/apache-jmeter-${JMETER_VERSION}/lib/ \
 
 
 COPY assets/entrypoint.sh /
+COPY assets/jvm_args.sh /
 
 RUN chmod +x /entrypoint.sh \
-  && chmod +x /test/test.sh
+  && chmod +x /jvm_args.sh \
+  && chmod +x /test/test.sh \
+  && rm -rf /tmp/*
 
 WORKDIR /test
 
