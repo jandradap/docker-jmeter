@@ -16,9 +16,15 @@ echo "JVM_ARGS=${JVM_ARGS}"
 
 # Keep entrypoint simple: we must pass the standard JMeter arguments
 
-while true; 
-do 
-  sleep 60; 
-  echo "Run jmeter or jmeter test /test/test.sh";
-done
+# while true; 
+# do 
+#   sleep 60; 
+#   echo "Run jmeter or jmeter test /test/test.sh";
+# done
 
+if [[ -z ${1} ]]; then
+  echo "Starting nginx..."
+  exec $(which nginx) -c /etc/nginx/nginx.conf -g "daemon off;" ${EXTRA_ARGS}
+else
+  exec "$@"
+fi

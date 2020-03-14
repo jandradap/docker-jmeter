@@ -3,7 +3,7 @@
 
 <a href='https://ko-fi.com/A417UXC' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
-Apache Jmeter 5.2 for OpenShift
+Apache Jmeter 5.2 with nginx for OpenShift
 
 ## Test
 
@@ -31,6 +31,7 @@ cp *.jmx jmeterlocal/
 
 docker run --rm -d --name=jmeter \
 -v $(pwd)/jmeterlocal:/tmp/jmeterlocal \
+-p 8080:8080 \
 jorgeandrada/docker-jmeter
 
 docker exec -it jmeter bash
@@ -49,8 +50,16 @@ jmeter -Dlog_level.jmeter=DEBUG \
 -n -t $JMXPATH/$JMXNAME.jmx -l $JMXPATH/$JMXNAME.jtl -j $JMXPATH/jmeter.log \
 -e -o $JMXPATH/$JMXNAME/report
 
-tar -czvf $JMXNAME.tar.gz $JMXPATH/$JMXNAME
+tar -czvf $JMXNAME.tar.gz $JMXPATH/$JMXNAME/report
+cp $JMXNAME.tar.gz /usr/share/nginx/html/
+cp -avr $JMXPATH/$JMXNAM/report/* /usr/share/nginx/html/
+
+# check http://localhost:8080
+# download http://localhost:8080/$JMXNAME.tar.gz
+
+# stop
 exit
+docker stop jmeter
 
 ls -lh jmeterlocal/
 ```

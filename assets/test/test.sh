@@ -28,6 +28,7 @@ T_DIR=/tmp/test
 R_DIR=${T_DIR}/report
 
 rm -rf ${T_DIR}/* > /dev/null 2>&1
+rm -rf /usr/share/nginx/html/* > /dev/null 2>&1
 mkdir -p ${R_DIR}
 
 cp /test/test-plan.jmx ${T_DIR}/
@@ -37,6 +38,10 @@ jmeter -Dlog_level.jmeter=DEBUG \
 	-JTARGET_PATH=${TARGET_PATH} -JTARGET_KEYWORD=${TARGET_KEYWORD} \
 	-n -t ${T_DIR}/test-plan.jmx -l ${T_DIR}/test-plan.jtl -j ${T_DIR}/jmeter.log \
 	-e -o ${R_DIR}
+
+tar -czvf test.tar.gz ${T_DIR}
+cp test.tar.gz /usr/share/nginx/html/
+cp -avr ${R_DIR}/* /usr/share/nginx/html/
 
 echo "==== jmeter.log ===="
 cat ${T_DIR}/jmeter.log

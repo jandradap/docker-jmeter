@@ -1,11 +1,11 @@
-FROM alpine:3.11
+FROM nginx:alpine
 
 ARG BUILD_DATE
 ARG VCS_REF
 ARG VERSION
 LABEL org.label-schema.build-date=$BUILD_DATE \
 			org.label-schema.name="docker-jmeter" \
-			org.label-schema.description="Apache JMeter Docker no root container image for Openshift" \
+			org.label-schema.description="Apache JMeter with nginx Docker no root container image for Openshift" \
 			org.label-schema.url="http://andradaprieto.es" \
 			org.label-schema.vcs-ref=$VCS_REF \
 			org.label-schema.vcs-url="https://github.com/jandradap/docker-jmeter" \
@@ -15,6 +15,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 			maintainer="Jorge Andrada Prieto <jandradap@gmail.com>"
 
 ARG JMETER_VERSION="5.2"
+ARG NGINX_PORT="8080"
 ENV JMETER_HOME /opt/apache-jmeter-${JMETER_VERSION}
 ENV	JMETER_BIN	${JMETER_HOME}/bin
 ENV	JMETER_DOWNLOAD_URL  https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz
@@ -57,6 +58,10 @@ RUN cd /opt/apache-jmeter-${JMETER_VERSION}/lib/ \
   && /opt/apache-jmeter-5.2/bin/PluginsManagerCMD.sh install-for-jmx /test/test-plan.jmx
 
 
+# NGINX
+RUN sed -i "s/listen       80;/listen       $NGINX_PORT;/g" /etc/nginx/conf.d/default.conf \
+  && rm -rf /usr/share/nginx/html/*
+
 COPY assets/entrypoint.sh /
 COPY assets/jvm_args.sh /
 
@@ -69,4 +74,4 @@ WORKDIR /test
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-USER 1001
+# USER 1001
