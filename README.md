@@ -51,8 +51,8 @@ jmeter -Dlog_level.jmeter=DEBUG \
 -e -o $JMXPATH/$JMXNAME/report
 
 tar -czvf $JMXNAME.tar.gz $JMXPATH/$JMXNAME/report
-cp $JMXNAME.tar.gz /usr/share/nginx/html/
-cp -avr $JMXPATH/$JMXNAM/report/* /usr/share/nginx/html/
+cp $JMXNAME.tar.gz /usr/share/nginx/html/$JMXNAM/
+cp -avr $JMXPATH/$JMXNAM/report/* /usr/share/nginx/html/$JMXNAM/
 
 # check http://localhost:8080
 # download http://localhost:8080/$JMXNAME.tar.gz

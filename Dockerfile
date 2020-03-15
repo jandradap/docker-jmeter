@@ -57,9 +57,9 @@ RUN cd /opt/apache-jmeter-${JMETER_VERSION}/lib/ \
   && sed -i "s/2.2/${CMDRUNNER_VERSION}/g" /opt/apache-jmeter-5.2/bin/PluginsManagerCMD.sh \
   && /opt/apache-jmeter-5.2/bin/PluginsManagerCMD.sh install-for-jmx /test/test-plan.jmx
 
-
 # NGINX
 RUN sed -i "s/listen       80;/listen       $NGINX_PORT;/g" /etc/nginx/conf.d/default.conf \
+  && sed i "s/\/var\/run\/nginx.pid;/\/tmp\/nginx.pid;/g" /etc/nginx/nginx.conf \
   && rm -rf /usr/share/nginx/html/*
 
 COPY assets/entrypoint.sh /
