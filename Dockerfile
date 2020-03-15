@@ -62,7 +62,7 @@ RUN sed -i "s/listen       80;/listen       $NGINX_PORT;/g" /etc/nginx/conf.d/de
   && sed -i "s/\/var\/run\/nginx.pid;/\/tmp\/nginx.pid;/g" /etc/nginx/nginx.conf \
   && sed -i 's/^user/#user/' /etc/nginx/nginx.conf \
   && chgrp -R root /var/cache/nginx /var/run /var/log/nginx \
-  && chmod -R 770 /var/cache/nginx /var/run /var/log/nginx \
+  && chmod -R 777 /var/cache/nginx /var/run /var/log/nginx \
   && rm -rf /usr/share/nginx/html/*
 
 COPY assets/entrypoint.sh /
