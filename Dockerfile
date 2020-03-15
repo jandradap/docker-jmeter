@@ -60,6 +60,8 @@ RUN cd /opt/apache-jmeter-${JMETER_VERSION}/lib/ \
 # NGINX
 RUN sed -i "s/listen       80;/listen       $NGINX_PORT;/g" /etc/nginx/conf.d/default.conf \
   && sed -i "s/\/var\/run\/nginx.pid;/\/tmp\/nginx.pid;/g" /etc/nginx/nginx.conf \
+  && chgrp -R root /var/cache/nginx /var/run /var/log/nginx \
+  && chmod -R 770 /var/cache/nginx /var/run /var/log/nginx \
   && rm -rf /usr/share/nginx/html/*
 
 COPY assets/entrypoint.sh /
@@ -72,6 +74,6 @@ RUN chmod +x /entrypoint.sh \
 
 WORKDIR /test
 
-ENTRYPOINT ["/entrypoint.sh"]
+EXPOSE 8080
 
-# USER 1001
+ENTRYPOINT ["/entrypoint.sh"]
