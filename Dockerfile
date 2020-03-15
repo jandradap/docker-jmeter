@@ -59,7 +59,7 @@ RUN cd /opt/apache-jmeter-${JMETER_VERSION}/lib/ \
 
 # NGINX
 RUN sed -i "s/listen       80;/listen       $NGINX_PORT;/g" /etc/nginx/conf.d/default.conf \
-  && sed i "s/\/var\/run\/nginx.pid;/\/tmp\/nginx.pid;/g" /etc/nginx/nginx.conf \
+  && sed -i "s/\/var\/run\/nginx.pid;/\/tmp\/nginx.pid;/g" /etc/nginx/nginx.conf \
   && rm -rf /usr/share/nginx/html/*
 
 COPY assets/entrypoint.sh /
