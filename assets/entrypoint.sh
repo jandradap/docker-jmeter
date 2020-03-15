@@ -13,16 +13,18 @@ export JVM_ARGS="-Xmn${n}m -Xms${s}m -Xmx${x}m"
 
 echo "START Running Jmeter on `date`"
 echo "JVM_ARGS=${JVM_ARGS}"
-echo "jmeter args=$@"
 
 # Keep entrypoint simple: we must pass the standard JMeter arguments
-jmeter $@
-echo "END Running Jmeter on `date`"
 
-#     -n \
-#    -t "/tests/${TEST_DIR}/${TEST_PLAN}.jmx" \
-#    -l "/tests/${TEST_DIR}/${TEST_PLAN}.jtl"
-# exec tail -f jmeter.log
-#    -D "java.rmi.server.hostname=${IP}" \
-#    -D "client.rmi.localport=${RMI_PORT}" \
-#  -R $REMOTE_HOSTS
+# while true; 
+# do 
+#   sleep 60; 
+#   echo "Run jmeter or jmeter test /test/test.sh";
+# done
+
+if [[ -z ${1} ]]; then
+  echo "Starting nginx..."
+  exec $(which nginx) -c /etc/nginx/nginx.conf -g "daemon off;" ${EXTRA_ARGS}
+else
+  exec "$@"
+fi

@@ -10,20 +10,38 @@ export TARGET_PORT="80"
 export TARGET_PATH="/kaarten.html"
 export TARGET_KEYWORD="Kaartdiensten"
 
-T_DIR=tests/trivial
+set -e
+freeMem=`awk '/MemFree/ { print int($2/1024) }' /proc/meminfo`
+s=$(($freeMem/10*8))
+x=$(($freeMem/10*8))
+n=$(($freeMem/10*2))
 
-# Reporting dir: start fresh
+if [ -z "$JVM_ARGS" ]; then {
+  export JVM_ARGS="-Xmn${n}m -Xms${s}m -Xmx${x}m"
+}
+fi
+
+echo "START Running Jmeter on `date`"
+echo "JVM_ARGS=${JVM_ARGS}"
+
+T_DIR=/tmp/test
 R_DIR=${T_DIR}/report
-rm -rf ${R_DIR} > /dev/null 2>&1
+
+rm -rf ${T_DIR}/* > /dev/null 2>&1
+rm -rf /usr/share/nginx/html/* > /dev/null 2>&1
 mkdir -p ${R_DIR}
 
-/bin/rm -f ${T_DIR}/test-plan.jtl ${T_DIR}/jmeter.log  > /dev/null 2>&1
+cp /test/test-plan.jmx ${T_DIR}/
 
-./run.sh -Dlog_level.jmeter=DEBUG \
+jmeter -Dlog_level.jmeter=DEBUG \
 	-JTARGET_HOST=${TARGET_HOST} -JTARGET_PORT=${TARGET_PORT} \
 	-JTARGET_PATH=${TARGET_PATH} -JTARGET_KEYWORD=${TARGET_KEYWORD} \
 	-n -t ${T_DIR}/test-plan.jmx -l ${T_DIR}/test-plan.jtl -j ${T_DIR}/jmeter.log \
 	-e -o ${R_DIR}
+
+tar -czvf test.tar.gz ${T_DIR}
+cp test.tar.gz /usr/share/nginx/html/
+cp -avr ${R_DIR}/* /usr/share/nginx/html/
 
 echo "==== jmeter.log ===="
 cat ${T_DIR}/jmeter.log
